@@ -573,6 +573,12 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
         blob_info = upload_files[0]
 
+	session = get_current_session()
+
+	if(not session.is_active()):
+		blob_info.delete()
+		self.redirect("/login")
+
 	mynetid = self.request.get("netid")
 	myfilename = str(blob_info.filename)
 
