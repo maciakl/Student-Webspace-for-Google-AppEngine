@@ -198,7 +198,7 @@ class LoginHandler(webapp.RequestHandler):
 
 	def post(self):
 
-		netid = self.request.get('netid')
+		netid = urllib.unquote(self.request.get('netid'))
 		password = self.request.get('password')
 
 		# check username and password
@@ -483,7 +483,7 @@ class DeleteHandler(webapp.RequestHandler):
 		logging.debug("Filename: %s" % filename)
 
 		
-		q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID =:1 AND fileName =:2", netid, filename)
+		q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID =:1 AND fileName =:2", netid, urllib.unquote(filename))
 		results = q.get()
 
 		logging.debug("Past the query. Result: %s" % str(results))
@@ -516,7 +516,7 @@ class AdminDeleteHandler(webapp.RequestHandler):
 		logging.debug("Filename: %s" % filename)
 
 		
-		q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID = :1 AND fileName =:2", student, filename)
+		q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID = :1 AND fileName =:2", student, urllib.unquote(filename))
 		results = q.get()
 
 		logging.debug("Past the query. Result: %s" % str(results))
@@ -609,11 +609,11 @@ class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, ffolder, ffile):
 	
     	logging.debug("FOLDER: " + str(ffolder))
-	logging.debug("FILE: " + str(ffile))
+	logging.debug("FILE: " + urllib.unquote(str(ffile)))
 
 	# get the blob key from the blobstore
 	
-	q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID =:1 AND fileName =:2", str(ffolder), str(ffile))
+	q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID =:1 AND fileName =:2", str(ffolder), urllib.unquote(str(ffile)))
 	results = q.get()
 	
 	resource = results.blobstoreKey
