@@ -62,6 +62,12 @@ HEADER = '''
 			box-shadow:0px 0px 9px #000000;
 		}
 
+		#footer {
+
+			margin: 20px;
+			padding: 0px 0px 0px 50px;
+		}
+
 		h2 {
 			padding: 10px 10px 10px 35px;
 			border: 1px solid gray;
@@ -127,11 +133,8 @@ HEADER = '''
 FOOTER = '''
 		</div>
 
-		<!--[if IE]>
-			<div id="iediss">Hey, the 90's have called and they want their browser back. Could you please use a standards compliant browser like Firefox or Chrome or anything that is not
-			Internet Exploder? Thanks!</div>
-		<![endif]-->
-		
+		<div id="footer"><small>Student Webspace &copy; Luke Maciak. See the <a href="https://github.com/maciakl/Student-Webspace-for-Google-AppEngine">Source Code</a></div>
+	
 	</body>
 </html>'''
 
