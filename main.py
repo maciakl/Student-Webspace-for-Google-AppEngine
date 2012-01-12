@@ -52,18 +52,31 @@ HEADER = '''
 		<title>Student Webspace</title>
 		<style type="text/css">
 
+		body {
+
+			font-size: 12px;
+			font-family: Verdana, Arial, SunSans-Regular, Sans-Serif;
+  			color:#564b47;  
+			padding:0px;
+			margin:0px;
+		}
+		
+
 		#content {
 			
 			margin: 20px;
 			padding: 50px 50px 100px 50px;
 
+			border: 1px solid gray;
+
 			-moz-border-radius:50px;
 			-webkit-border-radius:50px;
 			border-radius:50px;
+		
+			min-height: 350px;
+			height:auto !important;
+			height:350px;
 			
-			-moz-box-shadow:0px 0px 9px #000000;
-			-webkit-box-shadow:0px 0px 9px #000000;
-			box-shadow:0px 0px 9px #000000;
 		}
 
 		#footer {
@@ -83,27 +96,43 @@ HEADER = '''
 		}
 
 		#navbar {
-			background: lightBlue;
+
+			float: right;
+			width: 300px;
+
+			min-height: 200px;
+			height:auto !important;
+			height:200px;
+			
+
+			background: lightGray;
 			padding: 10px;
-			padding-right: 45px;
-			margin-left: 60%;
+
 			margin-right: 10px;
-			margin-top: -15px;
-			text-align: right;
+
+			text-align: center;
 
 			-moz-border-radius:20px;
 			-webkit-border-radius:20px;
 			border-radius:20px;
+
+			border: 1px solid gray;
 		}
 
 		#navbar a {
+
+			display: block;
 			padding: 5px;
-			margin-right: 15px;
+			margin-bottom: 10px;
+
 
 			background: lightYellow;
+
 			-moz-border-radius:10px;
 			-webkit-border-radius:10px;
 			border-radius:10px;
+
+			border: 1px solid gray;
 
 			text-decoration: none;
 		}
