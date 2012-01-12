@@ -163,6 +163,8 @@ HEADER = '''
 	<body>
 		<div id='content'>'''
 
+ADMIN_LINK = '<a href="/admin">admin panel</a>'
+
 FOOTER = '''
 		</div>
 
@@ -201,11 +203,14 @@ class MainHandler(webapp.RequestHandler):
 		logging.debug("SESSION NOT ACTIVE")
 		self.redirect('/login')
 
+	adm = ADMIN_LINK if checkAdmin(netID) else ''
+
+
         upload_url = blobstore.create_upload_url('/upload')
         
 	self.response.out.write(HEADER)
 	self.response.out.write('<h2>Student Webspace: File Upload</h2>')
-	self.response.out.write('<div id="navbar"><a href="/list">view uploaded files</a> <a href="/logout">log out</a></div><br>')
+	self.response.out.write('<div id="navbar">%s <a href="/list">view uploaded files</a> <a href="/logout">log out</a></div><br>' % adm)
 
         self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
 	self.response.out.write('<input type="hidden" name="netid" value="%s"><br>' % netID)
@@ -352,10 +357,12 @@ class ListHandler(webapp.RequestHandler):
 			self.redirect('/login')
 		
 		netid = session.get('netID')
+
+		adm = ADMIN_LINK if checkAdmin(netid) else ''
 		
 		self.response.out.write(HEADER)
 		self.response.out.write("<h2>Student Webspace: File List</h2>")
-		self.response.out.write('<div id="navbar"><a href="/">upload new file</a> <a href="/logout">log out</a></div><br>')
+		self.response.out.write('<div id="navbar">%s <a href="/">upload new file</a> <a href="/logout">log out</a></div><br>' % adm)
 
 		q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID =:1", netid)
 		results = q.fetch(100)
