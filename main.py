@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-#
+
+
+# Important!
+# Set this to False once you register your first account in the system and then redeploy
+FIRST_RUN = False
 
 import os
 import md5
@@ -261,7 +265,7 @@ class RegisterHandler(webapp.RequestHandler):
 		q = db.GqlQuery("SELECT * FROM CourseID WHERE courseID =:1", course)
 		results = q.get()
 
-		if(results == None):
+		if(results == None and not FIRST_RUN):
 			errorMsg(self, "Sorry, the Course ID you entered is invalid")
 			return
 
