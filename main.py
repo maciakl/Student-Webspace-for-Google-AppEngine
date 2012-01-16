@@ -9,6 +9,7 @@ import os
 import md5
 import urllib
 import logging
+import random
 
 from google.appengine.ext import db
 from gaesessions import get_current_session
@@ -337,6 +338,78 @@ def errorMsg(self, message):
 	self.response.out.write('<div id="navbar"><a href="/list">back</a></div>')
 	self.response.out.write('<p>%s.</p>' % message)
 	self.response.out.write(FOOTER)
+
+
+class InitHandler(webapp.RequestHandler):
+
+	def get(self):
+
+		netid = "admin"
+		q = db.GqlQuery("SELECT * FROM WebspaceUser WHERE username =:1", netid)
+		results = q.get()
+
+		if(results == None):
+
+			self.response.out.write(HEADER)
+			self.response.out.write('<h2>Student Webspace: Initialization</h2>')
+			self.response.out.write('<div id="navbar"><a href="/">back</a></div>')
+			self.response.out.write('<p>We are going to set up a default admin account for you. The username will be admin. Please choose a strong password:</p>')
+			self.response.out.write('<form action="/init" method="POST">')
+			self.response.out.write('Admin password:<br> <input type="password" name="password"><br>')
+			self.response.out.write('Retype Password:<br> <input type="password" name="password2"><br>')
+			self.response.out.write('<input type="submit" name="submit" value="Submit">') 
+			self.response.out.write('</form>')
+			self.response.out.write('<p>Next time, log in as admin with this password.</p>')
+			self.response.out.write(FOOTER)
+		else:
+			self.redirect('/')
+
+	def post(self):
+
+		netid = "admin"
+		q = db.GqlQuery("SELECT * FROM WebspaceUser WHERE username =:1", netid)
+		results = q.get()
+
+		if(results == None):
+
+			password1 = self.request.get("password")
+			password2 = self.request.get("password2")
+
+			if(password1 != password2):
+				errorMsg(self, "Passwords did not match")
+				return
+
+			password = md5.new(password1).hexdigest()
+
+			course = "ADMIN_" + str(random.randint(1000,9999))
+	
+			u = WebspaceUser()
+			u.type = "admin"
+		
+			u.username = "admin"
+			u.password = password
+			u.course = course
+		
+			u.put() 
+
+
+			q = db.GqlQuery("SELECT * FROM CourseID WHERE courseID =:1", course)
+			results = q.get()
+
+			if(not results == None):
+				errorMsg(self, "Sorry, this CoruseID already exists")
+			else:
+				u = CourseID()
+				u.status = "active"
+				u.courseID = course
+
+				u.put()
+
+			session = get_current_session()
+			session.set_quick('netID', "admin")
+	
+			self.redirect('/')
+
 
 class LogoutHandler(webapp.RequestHandler):
 
@@ -668,6 +741,7 @@ def main():
     
     application = webapp.WSGIApplication(
           [('/', MainHandler),
+	   ('/init', InitHandler),
 	   ('/login', LoginHandler),
 	   ('/logout', LogoutHandler),
 	   ('/register', RegisterHandler),

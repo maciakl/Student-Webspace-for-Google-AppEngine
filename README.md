@@ -24,20 +24,28 @@ Known Issues
 
 This app is provided as is, without any warranty. There are some serious bugs in it, and I haven't really got around to fix them. If you managed to iron these out, please let me know.
 
-#### Registering without Course ID 
+##### Registering without Course ID 
 
-When you run the app for the first time, there is no defined CourseID. Thing is one of the few caveats of the application. I simply did not bother making a proper "first-run" script. 
+When you run the app for the first time, there is no defined CourseID and therefore you won't be able to register. You have to first create your admin account.
 
-The easy workaround is this:
+To do this:
 
-  1. Change the FIRST_RUN constant defined in line 6 to True
-  1. Deploy the app and register first account
-  1. Change FIRST_RUN to False
-  1. Redeploy
+  1. Navigate your browser to http://yourapp/init
+  1. Choose a password
+  1. You will be automatically logged in as admin with that password.
 
-There will eventually be an easier way to do this.
+Once you log in, you will notice that there is already a CourseID in the system. It will be something like ADMIN_XXXX where XXXX is a randomly generated number. You can use this CourseID to register new users, but I recommend creating a new one from the admin panel when you introduce this app to the class.
 
-#### Creating Admin Account 
+Note that this procedure won't work in ver 0.2 or lower. If you are running earlier version please upgrade.
 
-All accounts start as "student" accounts. So once you have your first account, you will want to go to the AppEngine console DataStore viewer, find the WebSpaceUser value that was just created and manually change its "type" to "admin". There is no UI for this yet.
+##### Promoting a user to Admin status
+
+All accounts start as "student" accounts. Running the init procedure (see above) will create your first admin account. If you need more admins, you will want to add them manually. 
+
+  1. Go to the AppEngine console 
+  1. Click on DataStore viewer 
+  1. Find the WebSpaceUser value for the specific user 
+  1. Manually Change its "type" to "admin". 
+
+There is no UI for this yet but I expect to have one ready in version 0.4.
 
