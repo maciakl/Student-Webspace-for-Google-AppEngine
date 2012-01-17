@@ -50,3 +50,8 @@ All accounts start as `student` accounts. Running the init procedure (see above)
   1. Manually Change its `type` to `admin`. 
 
 There is no UI for this yet but I expect to have one ready in version 0.4.
+
+Licensing
+---------
+
+Student Webspace is licensed under **Apache License Version 2.0**.
