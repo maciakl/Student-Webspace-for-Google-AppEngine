@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 
-
-# Important!
-# Set this to False once you register your first account in the system and then redeploy
-FIRST_RUN = False
-
 import os
 import md5
 import urllib
@@ -211,7 +206,7 @@ class MainHandler(webapp.RequestHandler):
         
 	self.response.out.write(HEADER)
 	self.response.out.write('<h2>Student Webspace: File Upload</h2>')
-	self.response.out.write('<div id="navbar">%s <a href="/list">view uploaded files</a> <a href="/logout">log out</a></div><br>' % adm)
+	self.response.out.write('<div id="navbar">%s <a href="/list">view uploaded files</a> <a href="/password">change password</a> <a href="/logout">log out</a></div><br>' % adm)
 
         self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
 	self.response.out.write('<input type="hidden" name="netid" value="%s"><br>' % netID)
@@ -300,7 +295,7 @@ class RegisterHandler(webapp.RequestHandler):
 		q = db.GqlQuery("SELECT * FROM CourseID WHERE courseID =:1", course)
 		results = q.get()
 
-		if(results == None and not FIRST_RUN):
+		if(results == None):
 			errorMsg(self, "Sorry, the Course ID you entered is invalid")
 			return
 
@@ -340,11 +335,58 @@ def errorMsg(self, message):
 	self.response.out.write(FOOTER)
 
 
-class InitHandler(webapp.RequestHandler):
+class PasswordResetHandler(webapp.RequestHandler):
 
 	def get(self):
 
-		netid = "admin"
+			session = get_current_session()
+
+			if(not session.is_active()):
+				self.redirect('/login')
+		
+			self.response.out.write(HEADER)
+			self.response.out.write('<h2>Student Webspace: Password Reset</h2>')
+			self.response.out.write('<div id="navbar"><a href="/">back</a></div>')
+			self.response.out.write('<form action="/password" method="POST">')
+			self.response.out.write('New password:<br> <input type="password" name="password"><br>')
+			self.response.out.write('Retype Password:<br> <input type="password" name="password2"><br>')
+			self.response.out.write('<input type="submit" name="submit" value="Submit">') 
+			self.response.out.write('</form>')
+			self.response.out.write(FOOTER)
+
+	def post(self):
+
+			session = get_current_session()
+
+			if(not session.is_active()):
+				self.redirect('/login')
+
+			netid = session.get('netID')
+			password1 = self.request.get("password")
+			password2 = self.request.get("password2")
+
+			if(password1 != password2):
+				errorMsg(self, "Passwords did not match")
+				return
+
+			password = md5.new(password1).hexdigest()
+
+			q = db.GqlQuery("SELECT * FROM WebspaceUser WHERE username =:1", netid)
+			results = q.get()
+
+			#self.response.out.write(results.password)
+			
+			results.password = password
+			results.put()
+
+			self.redirect("/")
+
+
+class InitHandler(webapp.RequestHandler):
+
+	def get(self):
+            
+                netid = "admin"
 		q = db.GqlQuery("SELECT * FROM WebspaceUser WHERE username =:1", netid)
 		results = q.get()
 
@@ -435,7 +477,7 @@ class ListHandler(webapp.RequestHandler):
 		
 		self.response.out.write(HEADER)
 		self.response.out.write("<h2>Student Webspace: File List</h2>")
-		self.response.out.write('<div id="navbar">%s <a href="/">upload new file</a> <a href="/logout">log out</a></div><br>' % adm)
+		self.response.out.write('<div id="navbar">%s <a href="/">upload new file</a> <a href="/password">change password</a> <a href="/logout">log out</a></div><br>' % adm)
 
 		q = db.GqlQuery("SELECT * FROM MyBlobFile WHERE netID =:1", netid)
 		results = q.fetch(100)
@@ -742,6 +784,7 @@ def main():
     application = webapp.WSGIApplication(
           [('/', MainHandler),
 	   ('/init', InitHandler),
+	   ('/password', PasswordResetHandler),
 	   ('/login', LoginHandler),
 	   ('/logout', LogoutHandler),
 	   ('/register', RegisterHandler),
