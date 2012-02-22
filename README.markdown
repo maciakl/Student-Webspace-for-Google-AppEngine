@@ -53,5 +53,5 @@ There is no UI for this yet but I expect to have one ready in version 0.4.
 
 Licensing
 ---------
-
+(c) 2011 Lukasz Grzegorz Maciak
 Student Webspace is licensed under **Apache License Version 2.0**.
